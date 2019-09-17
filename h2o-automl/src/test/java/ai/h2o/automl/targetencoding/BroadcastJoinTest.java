@@ -43,6 +43,7 @@ public class BroadcastJoinTest extends TestUtil {
               .withVecTypes(Vec.T_CAT, Vec.T_NUM)
               .withDataForCol(0, ar("a", "c", "b"))
               .withDataForCol(1, ar(2, 1, 2))
+              .withChunkLayout(1,1,1)
               .build();
 
       rightFr = new TestFrameBuilder()
@@ -53,6 +54,7 @@ public class BroadcastJoinTest extends TestUtil {
               .withDataForCol(1, ar(2, 1, 1))
               .withDataForCol(2, ar(22, 33, 42))
               .withDataForCol(3, ar(44, 66, 84))
+              .withChunkLayout(1,1,1)
               .build();
 
       emptyNumerator = fr.anyVec().makeCon(0);
@@ -64,7 +66,6 @@ public class BroadcastJoinTest extends TestUtil {
 
       Scope.enter();
       
-      printOutFrameAsTable(joined);
       assertStringVecEquals(cvec("a", "c", "b"), joined.vec("ColA"));
       assertEquals(22, joined.vec(TargetEncoder.NUMERATOR_COL_NAME).at(0), 1e-5);
       assertEquals(44, joined.vec(TargetEncoder.DENOMINATOR_COL_NAME).at(0), 1e-5);
@@ -103,7 +104,6 @@ public class BroadcastJoinTest extends TestUtil {
       //Note: we end up with the order from the `right` frame
       int[][] levelMaps = {CategoricalWrappedVec.computeMap(holdoutEncodingMap.vec(0).domain(), fr.vec(0).domain())};
       res = Merge.merge(holdoutEncodingMap, fr, new int[]{0}, new int[]{0}, false, levelMaps);
-      printOutFrameAsTable(res, false, res.numRows());
       
       //We expect this assertion to fail
       assertStringVecEquals(cvec("a", "b", "c", "e", "a"), res.vec("ColB"));
