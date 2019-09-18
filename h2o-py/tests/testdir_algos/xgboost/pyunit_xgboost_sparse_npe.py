@@ -12,10 +12,10 @@ def test_try_to_get_npe():
     h2oParamsD = {"ntrees":ntrees, "max_depth":maxdepth, "seed":runSeed, "learn_rate":0.7, "col_sample_rate_per_tree" : 0.9,
                  "min_rows" : 5, "score_tree_interval": ntrees+1, "dmatrix_type":"sparse", "tree_method": "exact", "backend":"cpu"}
 
-    nrows = 1_000_000
-    ncols = 1_000
+    nrows = 5 * 1000 * 1000
+    ncols = 1000
     factorL = 11
-    numCols = 800
+    numCols = 500
     enumCols = ncols-numCols
     responseL = 2
     y='response'
