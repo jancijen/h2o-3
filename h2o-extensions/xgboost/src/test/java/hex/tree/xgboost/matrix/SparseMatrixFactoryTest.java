@@ -8,6 +8,15 @@ import static org.junit.Assert.assertEquals;
 public class SparseMatrixFactoryTest {
     
     @Test
+    public void testMatrixAlloc() {
+        SparseMatrixDimensions dims = new SparseMatrixDimensions(
+            new int[] {},
+            new int[] {}
+        );
+        SparseMatrixFactory.allocateCSRMatrix(dims);
+    }
+    
+    @Test
     public void testNestedPointerInit() {
         long pos = SparseMatrix.MAX_DIM + 30L;
         SparseMatrixFactory.NestedArrayPointer p = new SparseMatrixFactory.NestedArrayPointer(pos);

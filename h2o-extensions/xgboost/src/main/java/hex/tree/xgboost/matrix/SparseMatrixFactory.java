@@ -10,6 +10,7 @@ import water.fvec.Chunk;
 import water.fvec.Frame;
 import water.fvec.Vec;
 import water.util.ArrayUtils;
+import water.util.Log;
 
 import static hex.tree.xgboost.matrix.MatrixFactoryUtils.setResponseAndWeight;
 import static water.MemoryManager.*;
@@ -244,6 +245,9 @@ public class SparseMatrixFactory {
         final int colIndicesLastRowSize = dataLastRowSize;
 
         // Sparse matrix elements (non-zero elements)
+        if (Log.isLoggingFor(Log.DEBUG)) {
+            Log.debug("Allocating sparse data rows ", dataRowsNumber, " with last row size ", dataLastRowSize);
+        }
         float[][] sparseData = new float[dataLastRowSize == 0 ? dataRowsNumber : dataRowsNumber + 1][];
         int iterationLimit = dataLastRowSize == 0 ? sparseData.length : sparseData.length - 1;
         for (int sparseDataRow = 0; sparseDataRow < iterationLimit; sparseDataRow++) {
