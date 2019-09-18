@@ -1,20 +1,10 @@
 package hex.tree.xgboost.matrix;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
 public class SparseMatrixFactoryTest {
-    
-    @Test
-    public void testMatrixAlloc() {
-        SparseMatrixDimensions dims = new SparseMatrixDimensions(
-            new int[] {},
-            new int[] {}
-        );
-        SparseMatrixFactory.allocateCSRMatrix(dims);
-    }
     
     @Test
     public void testNestedPointerInit() {
