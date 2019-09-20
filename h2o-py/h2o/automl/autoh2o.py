@@ -571,7 +571,8 @@ class H2OAutoML(Keyed):
     # Private
     #-------------------------------------------------------------------------------------------------------------------
     def _fetch(self):
-        state = H2OAutoML._fetch_state(self.project_name)
+        key = self.project_name if not self._job else self._job.dest_key
+        state = H2OAutoML._fetch_state(key)
         self._leader_id = state['leader_id']
         self._leaderboard = state['leaderboard']
         self._event_log = el = state['event_log']
@@ -594,7 +595,7 @@ class H2OAutoML(Keyed):
         try:
             if job.progress > state.get('last_job_progress', 0):
                 # print("\nbar_progress={}, job_progress={}".format(bar_progress, job.progress))
-                events = H2OAutoML._fetch_state(self.project_name, properties=['event_log'])['event_log']
+                events = H2OAutoML._fetch_state(job.dest_key, properties=['event_log'])['event_log']
                 events = events[events['level'].isin(levels), :]
                 last_nrows = state.get('last_events_nrows', 0)
                 if events.nrows > last_nrows:
@@ -622,8 +623,8 @@ class H2OAutoML(Keyed):
             H2OJob.__PROGRESS_BAR__ = ori_progress_state
 
     @staticmethod
-    def _fetch_state(project_name, properties=None):
-        state_json = h2o.api("GET /99/AutoML/%s" % project_name)
+    def _fetch_state(run_id, properties=None):
+        state_json = h2o.api("GET /99/AutoML/%s" % run_id)
         project_name = state_json["project_name"]
 
         leaderboard_list = [key["name"] for key in state_json['leaderboard']['models']]
