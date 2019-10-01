@@ -112,7 +112,7 @@ public abstract class IcedHashMapBase<K, V> extends Iced implements Map<K, V>, C
   public final AutoBuffer write_impl( AutoBuffer ab ) {
     _write_lock = true;
     try {
-      if (map().size() == 0) return ab.put1(0); // empty map
+      if (map().size() == 0) return ab.put1(-1); // empty map
       Entry<K, V> entry = map().entrySet().iterator().next();
       K key = entry.getKey();
       V val = entry.getValue();
@@ -227,9 +227,11 @@ public abstract class IcedHashMapBase<K, V> extends Iced implements Map<K, V>, C
       assert map() == null || map().isEmpty(); // Fresh from serializer, no constructor has run
       Map<K, V> map = init();
       byte mode = ab.get1();
+      if (mode < 0) return this;
       KeyType keyType = keyType(mode);
       ValueType valueType = valueType(mode);
       boolean arrayVal = isArrayVal(mode);
+
       while (true) {
         K key = readKey(ab, keyType);
         if (key == null) break;

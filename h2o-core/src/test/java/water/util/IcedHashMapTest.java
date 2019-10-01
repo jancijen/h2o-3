@@ -217,4 +217,9 @@ public class IcedHashMapTest extends TestUtil {
         }});
         testWriteRead(map);
     }
+
+    public void testEmptyMap() {
+        testWriteRead(Collections.emptyMap());
+        testWriteJSON(Collections.emptyMap());
+    }
 }
