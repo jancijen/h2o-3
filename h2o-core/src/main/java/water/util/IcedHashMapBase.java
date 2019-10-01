@@ -6,6 +6,7 @@ import water.H2O;
 import water.Iced;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -42,8 +43,10 @@ public abstract class IcedHashMapBase<K, V> extends Iced implements Map<K, V>, C
     ;
 
     Class _clazz;
+    Class _arrayClazz;
     ValueType(Class clazz) {
       _clazz = clazz;
+      _arrayClazz = Array.newInstance(_clazz, 0).getClass();
     }
   }
 
@@ -77,19 +80,25 @@ public abstract class IcedHashMapBase<K, V> extends Iced implements Map<K, V>, C
   protected KeyType getKeyType(K key) {
     assert key != null;
     return Stream.of(KeyType.values())
-            .filter(t -> t._clazz.isAssignableFrom(key.getClass()))
+            .filter(t -> isValidKey(key, t))
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("keys of type "+key.getClass().getTypeName()+" are not supported"));
   }
 
   protected ValueType getValueType(V value) {
-    Class clazz = value == null ? Freezable.class
-                    : value.getClass().isArray() ? value.getClass().getComponentType()
-                    : value.getClass();
+    boolean isArray = value != null && value.getClass().isArray();
     return Stream.of(ValueType.values())
-            .filter(t -> t._clazz.isAssignableFrom(clazz))
+            .filter(t -> isValidValue(value, t, isArray))
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("values of type "+value.getClass().getTypeName()+" are not supported"));
+  }
+
+  protected boolean isValidKey(K key, KeyType keyType) {
+    return keyType._clazz.isInstance(key);
+  }
+
+  protected boolean isValidValue(V value, ValueType valueType, boolean isArray) {
+    return isArray ? valueType._arrayClazz.isInstance(value) : valueType._clazz.isInstance(value);
   }
 
   // This comment is stolen from water.parser.Categorical:

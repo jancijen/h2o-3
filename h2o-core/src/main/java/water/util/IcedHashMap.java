@@ -33,13 +33,15 @@ public class IcedHashMap<K, V> extends IcedHashMapBase<K,V> implements Concurren
 
     KeyType keyType = keyType(mode);
     ValueType valueType = valueType(mode);
+    boolean isArrayVal = isArrayVal(mode);
     // Start the walk at slot 2, because slots 0,1 hold meta-data
     // In the raw backing array, Keys and Values alternate in slots
     // Ignore tombstones and Primes and null's
     for (int i=2; i < kvs.length; i+=2) {
       K key = (K) kvs[i];
-      if (key == null) continue;
+      if (!isValidKey(key, keyType)) continue;
       V value = (V) kvs[i+1];
+      if (!isValidValue(value, valueType, isArrayVal)) continue;
       writeKey(ab, keyType, key);
       writeValue(ab, valueType, value);
     }
