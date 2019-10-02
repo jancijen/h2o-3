@@ -54,6 +54,7 @@ public class IcedHashMapTest extends TestUtil {
         assertEquals(map, write);
 
         IcedHashMap<K, V> read = new AutoBuffer().put(write).flipForReading().get();
+        System.out.println(read);
         assertMapEquals(map, read);
     }
 
@@ -123,6 +124,16 @@ public class IcedHashMapTest extends TestUtil {
         testWriteJSON(map, new TypeToken<Map<String, Integer[]>>(){}.getType());
     }
 
+    @Test public void testStringIntArray() {
+        final Map<String, int[]> map = Collections.unmodifiableMap(new HashMap<String, int[]>() {{
+            put("one", new int[] {1});
+            put("two", new int[] {2, 2});
+            put("three", new int[] {3, 3, 3});
+        }});
+        testWriteRead(map);
+        testWriteJSON(map, new TypeToken<Map<String, int[]>>(){}.getType());
+    }
+
     @Test public void testStringDouble() {
         final Map<String, Double> map = Collections.unmodifiableMap(new HashMap<String, Double>() {{
             put("one", 1.1);
@@ -138,6 +149,16 @@ public class IcedHashMapTest extends TestUtil {
             put("one", new Double[] {1.1});
             put("two", new Double[] {2.1, 2.2});
             put("three", new Double[] {3.1, 3.2, 3.3});
+        }});
+        testWriteRead(map);
+        testWriteJSON(map);
+    }
+
+    @Test public void testStringDoublePrimitiveArray() {
+        final Map<String, double[]> map = Collections.unmodifiableMap(new HashMap<String, double[]>() {{
+            put("one", new double[] {1.1});
+            put("two", new double[] {2.1, 2.2});
+            put("three", new double[] {3.1, 3.2, 3.3});
         }});
         testWriteRead(map);
         testWriteJSON(map);
